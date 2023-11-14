@@ -2,11 +2,11 @@ package com.example.appkotlin.features.recognize.data.repositories
 
 import com.example.appkotlin.features.recognize.data.datasources.IRecognizeService
 import com.example.appkotlin.features.recognize.data.models.Recognize
-import com.example.appkotlin.features.recognize.domain.dependencies.RecognizeRepository
+import com.example.appkotlin.features.recognize.domain.dependencies.IRecognizeRepository
 import com.example.appkotlin.features.recognize.domain.entities.InputImage
 import com.example.appkotlin.features.recognize.domain.entities.RecognizeResult
 
-class RecognizeRepo(private val recognizeService: IRecognizeService) : RecognizeRepository {
+class RecognizeRepository constructor(private val recognizeService: IRecognizeService) : IRecognizeRepository {
     override fun open() {
         recognizeService.open();
     }

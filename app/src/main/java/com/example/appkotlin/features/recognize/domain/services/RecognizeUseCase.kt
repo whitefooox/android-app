@@ -1,10 +1,11 @@
 package com.example.appkotlin.features.recognize.domain.services
 
-import com.example.appkotlin.features.recognize.domain.dependencies.RecognizeRepository
+import com.example.appkotlin.features.recognize.domain.dependencies.IRecognizeRepository
 import com.example.appkotlin.features.recognize.domain.entities.InputImage
 import com.example.appkotlin.features.recognize.domain.entities.RecognizeResult
 
-class RecognizeService(private val recognizeRepository: RecognizeRepository) {
+
+class RecognizeUseCase constructor(private val recognizeRepository: IRecognizeRepository) {
     fun open(){
         recognizeRepository.open();
     }

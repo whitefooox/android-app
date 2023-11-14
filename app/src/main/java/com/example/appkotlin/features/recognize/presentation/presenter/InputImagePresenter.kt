@@ -1,19 +1,19 @@
 package com.example.appkotlin.features.recognize.presentation.presenter
 
+import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.ImageDecoder
 import android.net.Uri
 import android.os.Build
 import android.provider.MediaStore
-import com.example.appkotlin.features.recognize.presentation.context.AppContext
 
-class InputImagePresenter {
-    companion object {
+class InputImagePresenter(private val context: Context) {
+
         fun getBitmapFromUri(uri: Uri): Bitmap{
             val bitmap = if (Build.VERSION.SDK_INT < 28) {
-                MediaStore.Images.Media.getBitmap(AppContext.get().contentResolver, uri)
+                MediaStore.Images.Media.getBitmap(context.contentResolver, uri)
             } else {
-                val source = ImageDecoder.createSource(AppContext.get().contentResolver, uri)
+                val source = ImageDecoder.createSource(context.contentResolver, uri)
                 ImageDecoder.decodeBitmap(source).copy(Bitmap.Config.ARGB_8888, true)
             }
             return bitmap;
@@ -59,5 +59,4 @@ class InputImagePresenter {
 
     }
          */
-    }
 }

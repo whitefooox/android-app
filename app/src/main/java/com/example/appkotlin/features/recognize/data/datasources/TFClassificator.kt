@@ -1,8 +1,8 @@
 package com.example.appkotlin.features.recognize.data.datasources
 
+import android.content.Context
 import android.util.Log
 import com.example.appkotlin.features.recognize.domain.entities.InputImage
-import com.example.appkotlin.features.recognize.presentation.context.AppContext
 import org.tensorflow.lite.Interpreter
 import org.tensorflow.lite.Tensor
 import org.tensorflow.lite.support.tensorbuffer.TensorBuffer
@@ -11,7 +11,7 @@ import java.io.FileInputStream
 import java.io.InputStreamReader
 import java.nio.channels.FileChannel
 
-class TFClassificator() : IRecognizeService {
+class TFClassificator constructor(private val context: Context): IRecognizeService {
 
     private val modelFileName: String = "model.tflite";
     private val labelsFileName: String = "labels.txt";
@@ -23,7 +23,7 @@ class TFClassificator() : IRecognizeService {
     private lateinit var outputTensor: Tensor;
 
     private fun loadModel(){
-        val modelFileDescriptor = AppContext.get().assets.openFd(modelFileName);
+        val modelFileDescriptor = context.assets.openFd(modelFileName);
         val modelFileChannel = FileInputStream(modelFileDescriptor.fileDescriptor).channel;
         val modelByteBuffer = modelFileChannel.map(
             FileChannel.MapMode.READ_ONLY,
@@ -41,7 +41,7 @@ class TFClassificator() : IRecognizeService {
     }
 
     private fun loadLabels(){
-        val inputStream = AppContext.get().assets.open(labelsFileName);
+        val inputStream = context.assets.open(labelsFileName);
         val bufferedReader = BufferedReader(InputStreamReader(inputStream));
         labels = ArrayList();
         var line = bufferedReader.readLine();

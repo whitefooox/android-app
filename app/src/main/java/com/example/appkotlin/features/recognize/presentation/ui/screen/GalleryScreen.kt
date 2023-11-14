@@ -2,10 +2,7 @@ package com.example.appkotlin.features.recognize.presentation.ui.screen
 
 import android.content.Context
 import android.graphics.Bitmap
-import android.graphics.ImageDecoder
 import android.net.Uri
-import android.os.Build
-import android.provider.MediaStore
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
@@ -27,33 +24,33 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
-import com.example.appkotlin.features.recognize.data.datasources.TFClassificator
-import com.example.appkotlin.features.recognize.data.models.Recognize
 import com.example.appkotlin.features.recognize.domain.entities.InputImage
 import com.example.appkotlin.features.recognize.domain.entities.RecognizeResult
+import com.example.appkotlin.features.recognize.domain.services.RecognizeUseCase
 import com.example.appkotlin.features.recognize.presentation.presenter.InputImagePresenter
 import org.tensorflow.lite.support.image.TensorImage
 
 @Composable
-fun GalleryScreen(context: Context) {
+fun GalleryScreen(recognizeUseCase: RecognizeUseCase, context: Context) {
 
     var imageUri by remember { mutableStateOf<Uri?>(null) }
     var bitmap by remember { mutableStateOf<Bitmap?>(null) }
-    val tensorflow by remember { mutableStateOf(TFClassificator()) }
+    //val tensorflow by remember { mutableStateOf(TFClassificator(context)) }
     var resutls by remember { mutableStateOf<List<RecognizeResult>?>(null) }
 
     fun recognize(bitmap: Bitmap): List<RecognizeResult>{
         val newBitmap = Bitmap.createScaledBitmap(bitmap, 224, 224, false);
         val byteBuffer = TensorImage.fromBitmap(newBitmap).buffer;
         val inputImage = InputImage(byteBuffer, 224, 224);
-        val res = tensorflow.recognize(inputImage);
-        return Recognize.fromMap(res);
+        //val res = tensorflow.recognize(inputImage);
+        val res = recognizeUseCase.recognize(inputImage);
+        return res;
     }
 
     val launcher = rememberLauncherForActivityResult(contract = ActivityResultContracts.GetContent(), onResult = {
         imageUri = it
         imageUri?.let {
-            bitmap = InputImagePresenter.getBitmapFromUri(imageUri!!);
+            bitmap = InputImagePresenter(context).getBitmapFromUri(imageUri!!);
         }
         bitmap?.let {
             resutls = recognize(bitmap!!)
@@ -61,9 +58,11 @@ fun GalleryScreen(context: Context) {
     })
 
     DisposableEffect(key1 = context, effect = {
-        tensorflow.open();
+        //tensorflow.open();
+        recognizeUseCase.open();
         onDispose {
-            tensorflow.close();
+            //tensorflow.close();
+            recognizeUseCase.close();
         }
     })
     
