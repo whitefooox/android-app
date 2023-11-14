@@ -31,4 +31,9 @@ object AppModule {
     fun provideRecognizeUseCase(recognizeRepository: IRecognizeRepository): RecognizeUseCase {
         return RecognizeUseCase(recognizeRepository);
     }
+
+    @Provides
+    fun provideImageInputPresenter(@ApplicationContext context: Context): InputImagePresenter{
+        return InputImagePresenter(context);
+    }
 }
