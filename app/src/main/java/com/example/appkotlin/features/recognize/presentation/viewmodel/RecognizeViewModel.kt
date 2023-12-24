@@ -2,10 +2,11 @@ package com.example.appkotlin.features.recognize.presentation.viewmodel
 
 import android.graphics.Bitmap
 import android.net.Uri
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import com.example.appkotlin.features.recognize.domain.entities.InputImage
 import com.example.appkotlin.features.recognize.domain.entities.RecognizeResult
-import com.example.appkotlin.features.recognize.domain.services.RecognizeUseCase
+import com.example.appkotlin.features.recognize.domain.services.RecognizeInteractor
 import com.example.appkotlin.features.recognize.presentation.presenter.InputImagePresenter
 import com.example.appkotlin.features.recognize.presentation.state.RecognizeUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -18,28 +19,31 @@ import javax.inject.Inject
 
 @HiltViewModel
 class RecognizeViewModel @Inject constructor(
-    private val recognizeUseCase: RecognizeUseCase,
+    private val recognizeInteractor: RecognizeInteractor,
     private val inputImagePresenter: InputImagePresenter
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(RecognizeUiState());
     val uiState: StateFlow<RecognizeUiState> = _uiState.asStateFlow();
 
-    fun openService(){
-        recognizeUseCase.open();
+    init {
+        Log.d("viewmodel", "init")
+        recognizeInteractor.open();
     }
 
-    fun closeService(){
-        recognizeUseCase.close();
+    override fun onCleared() {
+        Log.d("viewmodel", "close")
+        recognizeInteractor.close();
+        super.onCleared()
     }
 
     fun recognize(inputImage: InputImage): List<RecognizeResult>{
-        return recognizeUseCase.recognize(inputImage);
+        return recognizeInteractor.recognize(inputImage);
     }
 
     private fun getInputImageFromBitmap(bitmap: Bitmap): InputImage{
-        val width = recognizeUseCase.getWidth();
-        val height = recognizeUseCase.getHeight();
+        val width = recognizeInteractor.getWidth();
+        val height = recognizeInteractor.getHeight();
         val newBitmap = Bitmap.createScaledBitmap(bitmap, width, height, false);
         val byteBuffer = TensorImage.fromBitmap(newBitmap).buffer;
         val inputImage = InputImage(byteBuffer, width, height);

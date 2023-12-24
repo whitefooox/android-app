@@ -5,7 +5,7 @@ import com.example.appkotlin.features.recognize.domain.entities.InputImage
 import com.example.appkotlin.features.recognize.domain.entities.RecognizeResult
 
 
-class RecognizeUseCase constructor(private val recognizeRepository: IRecognizeRepository) {
+class RecognizeInteractor constructor(private val recognizeRepository: IRecognizeRepository) {
     fun open(){
         recognizeRepository.open();
     }
